@@ -370,11 +370,67 @@ void LibraryAccount::simulateBookCheckouts()
  with 2 member functions
  */
 
+struct FlightControlSystem
+{
+    Cockpit cockpit;
+
+    FlightControlSystem()
+    {
+        std::cout << "Constructing FlightControlSystem\n";
+    }
+
+    ~FlightControlSystem()
+    {
+        std::cout << "Destructing FlightControlSystem\n";
+        cockpit.simulateFlight(5);  // calling a member function during destruction for some cleanup logic
+    }
+
+    void prepareForFlight(const std::string& flightPlan)
+    {
+        cockpit.navigationSystem.updateFlightPlan(flightPlan);
+        std::cout << "Flight plan prepared: " << flightPlan << "\n";
+    }
+
+    void startAutoPilot()
+    {
+        cockpit.navigationSystem.activateAutoPilot();
+        std::cout << "Autopilot started\n";
+    }
+};
+
 /*
  new UDT 5:
  with 2 member functions
  */
+struct SmartHomeSystem
+{
+    SmartThermostat thermostat;
+    LibraryAccount libraryAccount;
 
+    SmartHomeSystem() 
+    : thermostat(21.0f, true), libraryAccount(15, 30)
+    {
+        std::cout << "Constructing SmartHomeSystem\n";
+    }
+
+    ~SmartHomeSystem()
+    {
+        std::cout << "Destructing SmartHomeSystem\n";
+        thermostat.adjustTemperature(19.0f);  // Lower the temperature upon system shutdown
+    }
+
+    void adjustTemperatureForReading()
+    {
+        thermostat.adjustTemperature(22.0f);  // Set a comfortable temperature for reading
+        std::cout << "Adjusted temperature for optimal reading comfort\n";
+    }
+
+    void checkOutBookForWeekend()
+    {
+        libraryAccount.checkOutBooks(2);  // Assume checking out 2 books for the weekend
+        std::cout << "Checked out books for a relaxing weekend\n";
+    }
+};
 /*
  MAKE SURE YOU ARE NOT ON THE MASTER BRANCH
 
