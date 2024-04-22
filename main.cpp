@@ -448,5 +448,37 @@ struct SmartHomeSystem
 #include <iostream>
 int main()
 {
+    SmartThermostat thermostat1, thermostat2;
+    LibraryAccount libraryAccount1, libraryAccount2;
+    Cockpit cockpit1, cockpit2;
+    FlightControlSystem flightControlSystem1, flightControlSystem2;
+    SmartHomeSystem smartHomeSystem1, smartHomeSystem2;
+
+    // Call member functions
+    thermostat1.adjustTemperature(25.0f);
+    thermostat1.switchMode("Heat");
+    thermostat2.sendEnergyUsageReport();
+    thermostat2.simulateDayPassing();
+
+    libraryAccount1.checkOutBooks(5);
+    libraryAccount1.payFines(20.0);
+    libraryAccount2.renewBooks();
+    libraryAccount2.simulateBookCheckouts();
+
+    cockpit1.navigateAirplane();
+    cockpit1.communicateWithATC("Ascending to 15000 feet.");
+    cockpit2.monitorSystems();
+    cockpit2.simulateFlight(5);
+
+    flightControlSystem1.prepareForFlight("Los Angeles");
+    flightControlSystem1.startAutoPilot();
+    flightControlSystem2.prepareForFlight("Paris");
+    flightControlSystem2.startAutoPilot();
+
+    smartHomeSystem1.adjustTemperatureForReading();
+    smartHomeSystem1.checkOutBookForWeekend();
+    smartHomeSystem2.adjustTemperatureForReading();
+    smartHomeSystem2.checkOutBookForWeekend();
+    
     std::cout << "good to go!" << std::endl;
 }
