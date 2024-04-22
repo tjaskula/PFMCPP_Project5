@@ -70,18 +70,253 @@ write 3 UDTs below that EACH have:
  You will use those in Part 3 of this project.
 
  */
-
+#include <iostream>
 /*
  copied UDT 1:
  */
+
+struct Cockpit
+{
+    int numberOfControlPanels {4};
+    std::string autopilotSystemType {"Advanced"};
+    bool visibilityThroughWindshield {true};
+    int numberOfSeats {2};
+    int amountOfEmergencyEquipment {5};
+
+    struct NavigationSystem
+    {
+        float gpsLatitude {0.0f};
+        float gpsLongitude {0.0f};
+        bool hasAutoPilotCapability {true};
+        std::string currentFlightPlan {"N/A"};
+        float altitude {10000.0f};
+
+        NavigationSystem()
+        {
+            std::cout << "Constructing NavigationSystem\n";
+        }
+
+        void updateFlightPlan(const std::string& newFlightPlan)
+        {
+            currentFlightPlan = newFlightPlan;
+            std::cout << "Updated flight plan to " << newFlightPlan << "\n";
+        }
+
+        void changeAltitude(float newAltitude)
+        {
+            altitude = newAltitude;
+            std::cout << "Changed altitude to " << newAltitude << "\n";
+        }
+
+        void activateAutoPilot()
+        {
+            hasAutoPilotCapability = true;
+            std::cout << "Autopilot activated\n";
+        }
+
+        void autoCorrectCourse(float targetLatitude, float targetLongitude)
+        {
+            std::cout << "Starting auto-correction for course...\n";
+            // Define thresholds for corrections
+            const float threshold = 0.1f;
+            while (std::abs(gpsLatitude - targetLatitude) > threshold || std::abs(gpsLongitude - targetLongitude) > threshold)
+            {
+                // Correct latitude
+                if (gpsLatitude < targetLatitude)
+                {
+                    gpsLatitude += 0.05f;
+                }
+                else if (gpsLatitude > targetLatitude)
+                {
+                    gpsLatitude -= 0.05f;
+                }
+
+                // Correct longitude
+                if (gpsLongitude < targetLongitude)
+                {
+                    gpsLongitude += 0.05f;
+                }
+                else if (gpsLongitude > targetLongitude)
+                {
+                    gpsLongitude -= 0.05f;
+                }
+
+                // Report current coordinates
+                std::cout << "Correcting to Latitude: " << gpsLatitude << ", Longitude: " << gpsLongitude << "\n";
+
+                // Check if within thresholds to break the loop early
+                if (std::abs(gpsLatitude - targetLatitude) <= threshold && std::abs(gpsLongitude - targetLongitude) <= threshold) {
+                    std::cout << "Course corrected to within acceptable thresholds.\n";
+                    break;
+                }
+            }
+        }
+
+    };
+
+    Cockpit()
+    {
+        std::cout << "Constructing Cockpit\n";
+    }
+
+    void navigateAirplane()
+    {
+        std::cout << "Navigating airplane with autopilot system type: " << autopilotSystemType << "\n";
+    }
+
+    void communicateWithATC(const std::string& message)
+    {
+        std::cout << "Communicating with ATC: " << message << "\n";
+    }
+
+    void monitorSystems()
+    {
+        std::cout << "Monitoring airplane systems\n";
+    }
+
+    void importNavigationSettings(NavigationSystem backupNavigationSystem)
+    {
+        navigationSystem = backupNavigationSystem;
+        std::cout << "Imported navigation settings from backup\n";
+    }
+
+    void performDiagnosticOnSystem(NavigationSystem systemToCheck)
+    {
+        std::cout << "Performing diagnostic check on navigation system.\n";
+        const float epsilon = 0.001f;
+        if (std::abs(navigationSystem.altitude - systemToCheck.altitude) > epsilon)
+        {
+            std::cout << "Altitude discrepancy detected. Current: " << navigationSystem.altitude
+                      << ", Checked: " << systemToCheck.altitude << "\n";
+        }
+        if (navigationSystem.hasAutoPilotCapability != systemToCheck.hasAutoPilotCapability)
+        {
+            std::cout << "Autopilot capability mismatch. Current: "
+                      << (navigationSystem.hasAutoPilotCapability ? "Enabled" : "Disabled")
+                      << ", Checked: " << (systemToCheck.hasAutoPilotCapability ? "Enabled" : "Disabled") << "\n";
+        }
+    }
+
+    void simulateFlight(int hours)
+    {
+        for (int hour = 1; hour <= hours; ++hour)
+        {
+            navigationSystem.changeAltitude(navigationSystem.altitude + 500.0f);
+            std::cout << "Hour " << hour << ": Altitude adjusted to " << navigationSystem.altitude << " feet.\n";
+            if (navigationSystem.altitude >= 15000.0f)
+            {
+                std::cout << "Cruising altitude reached.\n";
+                break;
+            }
+        }
+    }
+
+
+    NavigationSystem navigationSystem;
+};
 
 /*
  copied UDT 2:
  */
 
+struct SmartThermostat
+{
+    float currentRoomTemperature {20.0f};
+    float desiredTemperature;
+    float energyConsumptionKWh {3.5f};
+    std::string mode {"Auto"};
+    bool isWifiConnected;
+
+    SmartThermostat(float initDesiredTemperature = 22.0f, bool initWifiConnected = true)
+    : desiredTemperature(initDesiredTemperature), isWifiConnected(initWifiConnected)
+    {
+        std::cout << "Constructing SmartThermostat\n";
+    }
+
+    void adjustTemperature(float newTemperature) 
+    {
+        desiredTemperature = newTemperature;
+        std::cout << "Adjusted desired temperature to " << newTemperature << "\n";
+    }
+
+    void switchMode(const std::string& newMode)
+    {
+        mode = newMode;
+        std::cout << "Switched mode to " << newMode << "\n";
+    }
+
+    float sendEnergyUsageReport()
+    {
+        std::cout << "Sending energy usage report. Total consumption: " << energyConsumptionKWh << " kWh\n";
+        return energyConsumptionKWh;
+    }
+
+    void simulateDayPassing()
+    {
+        for (int day = 1; day <= 7; ++day)
+        {
+            currentRoomTemperature += 0.5f; // simulate temperature rise
+            std::cout << "Day " << day << ": Room temperature is now " << currentRoomTemperature << "°C\n";
+            if (currentRoomTemperature >= desiredTemperature)
+            {
+                std::cout << "Desired temperature reached or exceeded.\n";
+                break;
+            }
+        }
+    }
+};
+
 /*
  copied UDT 3:
  */
+
+struct LibraryAccount
+{
+    int booksCheckedOut {0};
+    int totalBooksAllowed;
+    double fineAmountDue {0.0};
+    std::string accountStatus {"active"};
+    int daysUntilReturnDue;
+
+    LibraryAccount(int allowed = 10, int daysUntilDue = 14)
+    : totalBooksAllowed(allowed), daysUntilReturnDue(daysUntilDue)
+    {
+        std::cout << "Constructing LibraryAccount\n";
+    }
+
+    void checkOutBooks(int numberOfBooks)
+    {
+        booksCheckedOut += numberOfBooks;
+        std::cout << "Checked out " << numberOfBooks << " books. Total checked out: " << booksCheckedOut << "\n";
+    }
+
+    void payFines(double amount)
+    {
+        fineAmountDue -= amount;
+        std::cout << "Paid fine. Remaining fine amount: $" << fineAmountDue << "\n";
+    }
+
+    void renewBooks()
+    {
+        std::cout << "Books renewed. No fines due\n";
+    }
+
+    void simulateBookCheckouts()
+    {
+        int days = 0;
+        while (booksCheckedOut < totalBooksAllowed)
+        {
+            ++booksCheckedOut;
+            ++days;
+            std::cout << "Checked out one more book, total: " << booksCheckedOut << "\n";
+            if (booksCheckedOut == totalBooksAllowed)
+            {
+                std::cout << "Reached max books allowed after " << days << " days.\n";
+                break;
+            }
+        }
+    }
+};
 
 /*
  new UDT 4:
