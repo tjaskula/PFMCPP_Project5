@@ -92,6 +92,7 @@ struct Cockpit
         float altitude {10000.0f};
 
         NavigationSystem();
+        ~NavigationSystem();
 
         void updateFlightPlan(const std::string& newFlightPlan);
         void changeAltitude(float newAltitude);
@@ -100,6 +101,7 @@ struct Cockpit
     };
 
     Cockpit();
+    ~Cockpit();
     void navigateAirplane();
     void communicateWithATC(const std::string& message);
     void monitorSystems();
@@ -113,6 +115,11 @@ struct Cockpit
 Cockpit::NavigationSystem::NavigationSystem()
 {
     std::cout << "Constructing NavigationSystem\n";
+}
+
+Cockpit::NavigationSystem::~NavigationSystem()
+{
+    std::cout << "Destructing NavigationSystem\n";
 }
 
 void Cockpit::NavigationSystem::updateFlightPlan(const std::string& newFlightPlan)
@@ -170,6 +177,11 @@ void Cockpit::NavigationSystem::autoCorrectCourse(float targetLatitude, float ta
 Cockpit::Cockpit()
 {
     std::cout << "Constructing Cockpit\n";
+}
+
+Cockpit::~Cockpit()
+{
+    std::cout << "Destructing Cockpit\n";
 }
 
 void Cockpit::navigateAirplane()
@@ -237,6 +249,7 @@ struct SmartThermostat
     bool isWifiConnected;
 
     SmartThermostat(float initDesiredTemperature = 22.0f, bool initWifiConnected = true);
+    ~SmartThermostat();
 
     void adjustTemperature(float newTemperature);
     void switchMode(const std::string& newMode);
@@ -248,6 +261,11 @@ SmartThermostat::SmartThermostat(float initDesiredTemperature, bool initWifiConn
 : desiredTemperature(initDesiredTemperature), isWifiConnected(initWifiConnected)
 {
     std::cout << "Constructing SmartThermostat\n";
+}
+
+SmartThermostat::~SmartThermostat()
+{
+    std::cout << "Destructing SmartThermostat\n";
 }
 
 void SmartThermostat::adjustTemperature(float newTemperature) 
@@ -295,6 +313,7 @@ struct LibraryAccount
     int daysUntilReturnDue;
 
     LibraryAccount(int allowed = 10, int daysUntilDue = 14);
+    ~LibraryAccount();
 
     void checkOutBooks(int numberOfBooks);
     void payFines(double amount);
@@ -306,6 +325,11 @@ LibraryAccount::LibraryAccount(int allowed, int daysUntilDue)
 : totalBooksAllowed(allowed), daysUntilReturnDue(daysUntilDue)
 {
     std::cout << "Constructing LibraryAccount\n";
+}
+
+LibraryAccount::~LibraryAccount()
+{
+    std::cout << "Destructing LibraryAccount\n";
 }
 
 void LibraryAccount::checkOutBooks(int numberOfBooks)
