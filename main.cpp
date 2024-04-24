@@ -129,19 +129,19 @@ Cockpit::NavigationSystem::~NavigationSystem()
 
 void Cockpit::NavigationSystem::updateFlightPlan(const std::string& newFlightPlan)
 {
-    currentFlightPlan = newFlightPlan;
+    this->currentFlightPlan = newFlightPlan;
     std::cout << "Updated flight plan to " << newFlightPlan << "\n";
 }
 
 void Cockpit::NavigationSystem::changeAltitude(float newAltitude)
 {
-    altitude = newAltitude;
+    this->altitude = newAltitude;
     std::cout << "Changed altitude to " << newAltitude << "\n";
 }
 
 void Cockpit::NavigationSystem::activateAutoPilot()
 {
-    hasAutoPilotCapability = true;
+    this->hasAutoPilotCapability = true;
     std::cout << "Autopilot activated\n";
 }
 
@@ -149,29 +149,29 @@ void Cockpit::NavigationSystem::autoCorrectCourse(float targetLatitude, float ta
 {
     std::cout << "Starting auto-correction for course...\n";
     const float threshold = 0.1f;
-    while (std::abs(gpsLatitude - targetLatitude) > threshold || std::abs(gpsLongitude - targetLongitude) > threshold)
+    while (std::abs(this->gpsLatitude - targetLatitude) > threshold || std::abs(this->gpsLongitude - targetLongitude) > threshold)
     {
-        if (gpsLatitude < targetLatitude)
+        if (this->gpsLatitude < targetLatitude)
         {
-            gpsLatitude += 0.05f;
+            this->gpsLatitude += 0.05f;
         }
-        else if (gpsLatitude > targetLatitude)
+        else if (this->gpsLatitude > targetLatitude)
         {
-            gpsLatitude -= 0.05f;
-        }
-
-        if (gpsLongitude < targetLongitude)
-        {
-            gpsLongitude += 0.05f;
-        }
-        else if (gpsLongitude > targetLongitude)
-        {
-            gpsLongitude -= 0.05f;
+            this->gpsLatitude -= 0.05f;
         }
 
-        std::cout << "Correcting to Latitude: " << gpsLatitude << ", Longitude: " << gpsLongitude << "\n";
+        if (this->gpsLongitude < targetLongitude)
+        {
+            this->gpsLongitude += 0.05f;
+        }
+        else if (this->gpsLongitude > targetLongitude)
+        {
+            this->gpsLongitude -= 0.05f;
+        }
 
-        if (std::abs(gpsLatitude - targetLatitude) <= threshold && std::abs(gpsLongitude - targetLongitude) <= threshold)
+        std::cout << "Correcting to Latitude: " << this->gpsLatitude << ", Longitude: " << this->gpsLongitude << "\n";
+
+        if (std::abs(this->gpsLatitude - targetLatitude) <= threshold && std::abs(this->gpsLongitude - targetLongitude) <= threshold)
         {
             std::cout << "Course corrected to within acceptable thresholds.\n";
             break;
@@ -191,7 +191,7 @@ Cockpit::~Cockpit()
 
 void Cockpit::navigateAirplane()
 {
-    std::cout << "Navigating airplane with autopilot system type: " << autopilotSystemType << "\n";
+    std::cout << "Navigating airplane with autopilot system type: " << this->autopilotSystemType << "\n";
 }
 
 void Cockpit::communicateWithATC(const std::string& message)
@@ -206,7 +206,7 @@ void Cockpit::monitorSystems()
 
 void Cockpit::importNavigationSettings(Cockpit::NavigationSystem backupNavigationSystem)
 {
-    navigationSystem = backupNavigationSystem;
+    this->navigationSystem = backupNavigationSystem;
     std::cout << "Imported navigation settings from backup\n";
 }
 
@@ -214,15 +214,15 @@ void Cockpit::performDiagnosticOnSystem(Cockpit::NavigationSystem systemToCheck)
 {
     std::cout << "Performing diagnostic check on navigation system.\n";
     const float epsilon = 0.001f;
-    if (std::abs(navigationSystem.altitude - systemToCheck.altitude) > epsilon)
+    if (std::abs(this->navigationSystem.altitude - systemToCheck.altitude) > epsilon)
     {
-        std::cout << "Altitude discrepancy detected. Current: " << navigationSystem.altitude
+        std::cout << "Altitude discrepancy detected. Current: " << this->navigationSystem.altitude
                   << ", Checked: " << systemToCheck.altitude << "\n";
     }
-    if (navigationSystem.hasAutoPilotCapability != systemToCheck.hasAutoPilotCapability)
+    if (this->navigationSystem.hasAutoPilotCapability != systemToCheck.hasAutoPilotCapability)
     {
         std::cout << "Autopilot capability mismatch. Current: "
-                  << (navigationSystem.hasAutoPilotCapability ? "Enabled" : "Disabled")
+                  << (this->navigationSystem.hasAutoPilotCapability ? "Enabled" : "Disabled")
                   << ", Checked: " << (systemToCheck.hasAutoPilotCapability ? "Enabled" : "Disabled") << "\n";
     }
 }
@@ -231,9 +231,9 @@ void Cockpit::simulateFlight(int hours)
 {
     for (int hour = 1; hour <= hours; ++hour)
     {
-        navigationSystem.changeAltitude(navigationSystem.altitude + 500.0f);
-        std::cout << "Hour " << hour << ": Altitude adjusted to " << navigationSystem.altitude << " feet.\n";
-        if (navigationSystem.altitude >= 15000.0f)
+        navigationSystem.changeAltitude(this->navigationSystem.altitude + 500.0f);
+        std::cout << "Hour " << hour << ": Altitude adjusted to " << this->navigationSystem.altitude << " feet.\n";
+        if (this->navigationSystem.altitude >= 15000.0f)
         {
             std::cout << "Cruising altitude reached.\n";
             break;
@@ -275,29 +275,29 @@ SmartThermostat::~SmartThermostat()
 
 void SmartThermostat::adjustTemperature(float newTemperature) 
 {
-    desiredTemperature = newTemperature;
+    this->desiredTemperature = newTemperature;
     std::cout << "Adjusted desired temperature to " << newTemperature << "\n";
 }
 
 void SmartThermostat::switchMode(const std::string& newMode)
 {
-    mode = newMode;
+    this->mode = newMode;
     std::cout << "Switched mode to " << newMode << "\n";
 }
 
 float SmartThermostat::sendEnergyUsageReport()
 {
-    std::cout << "Sending energy usage report. Total consumption: " << energyConsumptionKWh << " kWh\n";
-    return energyConsumptionKWh;
+    std::cout << "Sending energy usage report. Total consumption: " << this->energyConsumptionKWh << " kWh\n";
+    return this->energyConsumptionKWh;
 }
 
 void SmartThermostat::simulateDayPassing()
 {
     for (int day = 1; day <= 7; ++day)
     {
-        currentRoomTemperature += 0.5f; // simulate temperature rise
-        std::cout << "Day " << day << ": Room temperature is now " << currentRoomTemperature << "°C\n";
-        if (currentRoomTemperature >= desiredTemperature)
+        this->currentRoomTemperature += 0.5f; // simulate temperature rise
+        std::cout << "Day " << day << ": Room temperature is now " << this->currentRoomTemperature << "°C\n";
+        if (this->currentRoomTemperature >= this->desiredTemperature)
         {
             std::cout << "Desired temperature reached or exceeded.\n";
             break;
@@ -339,14 +339,14 @@ LibraryAccount::~LibraryAccount()
 
 void LibraryAccount::checkOutBooks(int numberOfBooks)
 {
-    booksCheckedOut += numberOfBooks;
-    std::cout << "Checked out " << numberOfBooks << " books. Total checked out: " << booksCheckedOut << "\n";
+    this->booksCheckedOut += numberOfBooks;
+    std::cout << "Checked out " << numberOfBooks << " books. Total checked out: " << this->booksCheckedOut << "\n";
 }
 
 void LibraryAccount::payFines(double amount)
 {
-    fineAmountDue -= amount;
-    std::cout << "Paid fine. Remaining fine amount: $" << fineAmountDue << "\n";
+    this->fineAmountDue -= amount;
+    std::cout << "Paid fine. Remaining fine amount: $" << this->fineAmountDue << "\n";
 }
 
 void LibraryAccount::renewBooks()
@@ -357,12 +357,12 @@ void LibraryAccount::renewBooks()
 void LibraryAccount::simulateBookCheckouts()
 {
     int days = 0;
-    while (booksCheckedOut < totalBooksAllowed)
+    while (this->booksCheckedOut < this->totalBooksAllowed)
     {
-        ++booksCheckedOut;
+        ++this->booksCheckedOut;
         ++days;
-        std::cout << "Checked out one more book, total: " << booksCheckedOut << "\n";
-        if (booksCheckedOut == totalBooksAllowed)
+        std::cout << "Checked out one more book, total: " << this->booksCheckedOut << "\n";
+        if (this->booksCheckedOut == this->totalBooksAllowed)
         {
             std::cout << "Reached max books allowed after " << days << " days.\n";
             break;
@@ -387,18 +387,18 @@ struct FlightControlSystem
     ~FlightControlSystem()
     {
         std::cout << "Destructing FlightControlSystem\n";
-        cockpit.simulateFlight(5);  // calling a member function during destruction for some cleanup logic
+        this->cockpit.simulateFlight(5);  // calling a member function during destruction for some cleanup logic
     }
 
     void prepareForFlight(const std::string& flightPlan)
     {
-        cockpit.navigationSystem.updateFlightPlan(flightPlan);
+        this->cockpit.navigationSystem.updateFlightPlan(flightPlan);
         std::cout << "Flight plan prepared: " << flightPlan << "\n";
     }
 
     void startAutoPilot()
     {
-        cockpit.navigationSystem.activateAutoPilot();
+        this->cockpit.navigationSystem.activateAutoPilot();
         std::cout << "Autopilot started\n";
     }
 };
@@ -421,18 +421,18 @@ struct SmartHomeSystem
     ~SmartHomeSystem()
     {
         std::cout << "Destructing SmartHomeSystem\n";
-        thermostat.adjustTemperature(19.0f);  // Lower the temperature upon system shutdown
+        this->thermostat.adjustTemperature(19.0f);  // Lower the temperature upon system shutdown
     }
 
     void adjustTemperatureForReading()
     {
-        thermostat.adjustTemperature(22.0f);  // Set a comfortable temperature for reading
+        this->thermostat.adjustTemperature(22.0f);  // Set a comfortable temperature for reading
         std::cout << "Adjusted temperature for optimal reading comfort\n";
     }
 
     void checkOutBookForWeekend()
     {
-        libraryAccount.checkOutBooks(2);  // Assume checking out 2 books for the weekend
+        this->libraryAccount.checkOutBooks(2);  // Assume checking out 2 books for the weekend
         std::cout << "Checked out books for a relaxing weekend\n";
     }
 };
@@ -484,6 +484,13 @@ int main()
     smartHomeSystem1.checkOutBookForWeekend();
     smartHomeSystem2.adjustTemperatureForReading();
     smartHomeSystem2.checkOutBookForWeekend();
+
+    std::cout << "Thermostat thermostat1.sendEnergyUsageReport: " <<  thermostat1.sendEnergyUsageReport() << " and thermostat1.currentRoomTemperature:" << thermostat1.currentRoomTemperature << std::endl;
+    std::cout << "Library account books checked out: " << libraryAccount1.booksCheckedOut << std::endl;
+    std::cout << "Cockpit current altitude: " << cockpit1.navigationSystem.altitude << " feet" << std::endl;
+    std::cout << "Cockpit number of control panels: " << flightControlSystem1.cockpit.numberOfControlPanels << std::endl;
+    std::cout << "Smart home system desired temperature: " << smartHomeSystem1.thermostat.desiredTemperature << std::endl;
+
     
     std::cout << "good to go!" << std::endl;
 }
