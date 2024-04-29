@@ -86,6 +86,7 @@ void Axe::aConstMemberFunction() const { }
 */
 
 #include <iostream>
+#include "LeakedObjectDetector.h"
 /*
  copied UDT 1:
  */
@@ -113,6 +114,8 @@ struct Cockpit
         void changeAltitude(float newAltitude);
         void activateAutoPilot();
         void autoCorrectCourse(float targetLatitude, float targetLongitude);
+
+        JUCE_LEAK_DETECTOR(NavigationSystem)
     };
 
     Cockpit();
@@ -120,11 +123,35 @@ struct Cockpit
     void navigateAirplane();
     void communicateWithATC(const std::string& message);
     void monitorSystems();
-    void importNavigationSettings(NavigationSystem backupNavigationSystem);
-    void performDiagnosticOnSystem(NavigationSystem systemToCheck);
+    void importNavigationSettings(const NavigationSystem& backupNavigationSystem);
+    void performDiagnosticOnSystem(const NavigationSystem& systemToCheck);
     void simulateFlight(int hours);
 
     NavigationSystem navigationSystem;
+
+    JUCE_LEAK_DETECTOR(Cockpit)
+};
+
+struct WrapperCockpit
+{
+    WrapperCockpit(Cockpit* cockpitptr) : pointerToCockpit(cockpitptr) {}
+    ~WrapperCockpit()
+    {
+        delete pointerToCockpit;
+    }
+
+    Cockpit* pointerToCockpit = nullptr;
+};
+
+struct WrapperNavigationSystem
+{
+    WrapperNavigationSystem(Cockpit::NavigationSystem* navsysptr) : pointerToNavSys(navsysptr) {}
+    ~WrapperNavigationSystem()
+    {
+        delete pointerToNavSys;
+    }
+
+    Cockpit::NavigationSystem* pointerToNavSys = nullptr;
 };
 
 Cockpit::NavigationSystem::NavigationSystem()
@@ -214,13 +241,13 @@ void Cockpit::monitorSystems()
     std::cout << "Monitoring airplane systems\n";
 }
 
-void Cockpit::importNavigationSettings(Cockpit::NavigationSystem backupNavigationSystem)
+void Cockpit::importNavigationSettings(const Cockpit::NavigationSystem& backupNavigationSystem)
 {
     this->navigationSystem = backupNavigationSystem;
     std::cout << "Imported navigation settings from backup\n";
 }
 
-void Cockpit::performDiagnosticOnSystem(Cockpit::NavigationSystem systemToCheck)
+void Cockpit::performDiagnosticOnSystem(const Cockpit::NavigationSystem& systemToCheck)
 {
     std::cout << "Performing diagnostic check on navigation system.\n";
     const float epsilon = 0.001f;
@@ -270,6 +297,19 @@ struct SmartThermostat
     void switchMode(const std::string& newMode);
     float sendEnergyUsageReport();
     void simulateDayPassing();
+
+    JUCE_LEAK_DETECTOR(SmartThermostat)
+};
+
+struct WrapperSmartThermostat
+{
+    WrapperSmartThermostat(SmartThermostat* smartThptr) : pointerToSmartTh(smartThptr) {}
+    ~WrapperSmartThermostat()
+    {
+        delete pointerToSmartTh;
+    }
+
+    SmartThermostat* pointerToSmartTh = nullptr;
 };
 
 SmartThermostat::SmartThermostat(float initDesiredTemperature, bool initWifiConnected) 
@@ -334,6 +374,19 @@ struct LibraryAccount
     void payFines(double amount);
     void renewBooks();
     void simulateBookCheckouts();
+
+    JUCE_LEAK_DETECTOR(LibraryAccount)
+};
+
+struct WrapperLibraryAccount
+{
+    WrapperLibraryAccount(LibraryAccount* libaccptr) : pointerToLibAcc(libaccptr) {}
+    ~WrapperLibraryAccount()
+    {
+        delete pointerToLibAcc;
+    }
+
+    LibraryAccount* pointerToLibAcc = nullptr;
 };
 
 LibraryAccount::LibraryAccount(int allowed, int daysUntilDue)
@@ -411,6 +464,19 @@ struct FlightControlSystem
         this->cockpit.navigationSystem.activateAutoPilot();
         std::cout << "Autopilot started\n";
     }
+
+    JUCE_LEAK_DETECTOR(FlightControlSystem)
+};
+
+struct WrapperFlightControlSystem
+{
+    WrapperFlightControlSystem(FlightControlSystem* flightCtrlSysptr) :     pointerToFlightCtrlSys(flightCtrlSysptr) {}
+    ~WrapperFlightControlSystem()
+    {
+        delete pointerToFlightCtrlSys;
+    }
+
+    FlightControlSystem* pointerToFlightCtrlSys = nullptr;
 };
 
 /*
@@ -445,7 +511,21 @@ struct SmartHomeSystem
         this->libraryAccount.checkOutBooks(2);  // Assume checking out 2 books for the weekend
         std::cout << "Checked out books for a relaxing weekend\n";
     }
+
+    JUCE_LEAK_DETECTOR(SmartHomeSystem)
 };
+
+struct WrapperSmartHomeSystem
+{
+    WrapperSmartHomeSystem(SmartHomeSystem* smarthomesysptr) :     pointerToSmartHomeSys(smarthomesysptr) {}
+    ~WrapperSmartHomeSystem()
+    {
+        delete pointerToSmartHomeSys;
+    }
+
+    SmartHomeSystem* pointerToSmartHomeSys = nullptr;
+};
+
 /*
  MAKE SURE YOU ARE NOT ON THE MASTER BRANCH
 
@@ -461,45 +541,49 @@ struct SmartHomeSystem
  */
 
 #include <iostream>
+
 int main()
 {
-    SmartThermostat thermostat1, thermostat2;
-    LibraryAccount libraryAccount1, libraryAccount2;
-    Cockpit cockpit1, cockpit2;
-    FlightControlSystem flightControlSystem1, flightControlSystem2;
-    SmartHomeSystem smartHomeSystem1, smartHomeSystem2;
+    WrapperSmartThermostat thermostat(new SmartThermostat(22.0f, true)); 
+    thermostat.pointerToSmartTh->adjustTemperature(25.0f);
+    thermostat.pointerToSmartTh->switchMode("Heat");
+    thermostat.pointerToSmartTh->sendEnergyUsageReport();
+    thermostat.pointerToSmartTh->simulateDayPassing();
 
-    // Call member functions
-    thermostat1.adjustTemperature(25.0f);
-    thermostat1.switchMode("Heat");
-    thermostat2.sendEnergyUsageReport();
-    thermostat2.simulateDayPassing();
+    WrapperLibraryAccount libraryAccount(new LibraryAccount(10, 14));
+    libraryAccount.pointerToLibAcc->checkOutBooks(5);
+    libraryAccount.pointerToLibAcc->payFines(20.0);
+    libraryAccount.pointerToLibAcc->renewBooks();
+    libraryAccount.pointerToLibAcc->simulateBookCheckouts();
 
-    libraryAccount1.checkOutBooks(5);
-    libraryAccount1.payFines(20.0);
-    libraryAccount2.renewBooks();
-    libraryAccount2.simulateBookCheckouts();
+    WrapperCockpit cockpit(new Cockpit());
+    cockpit.pointerToCockpit->navigateAirplane();
+    cockpit.pointerToCockpit->communicateWithATC("Ascending to 15000 feet.");
+    cockpit.pointerToCockpit->monitorSystems();
+    cockpit.pointerToCockpit->simulateFlight(5);
 
-    cockpit1.navigateAirplane();
-    cockpit1.communicateWithATC("Ascending to 15000 feet.");
-    cockpit2.monitorSystems();
-    cockpit2.simulateFlight(5);
+    WrapperNavigationSystem navigationSystem(new Cockpit::NavigationSystem());
+    navigationSystem.pointerToNavSys->updateFlightPlan(std::string("New York to Los Angeles"));
+    navigationSystem.pointerToNavSys->activateAutoPilot();
+    navigationSystem.pointerToNavSys->changeAltitude(15000.0f);
+    navigationSystem.pointerToNavSys->autoCorrectCourse(45.0f, -75.0f);
 
-    flightControlSystem1.prepareForFlight("Los Angeles");
-    flightControlSystem1.startAutoPilot();
-    flightControlSystem2.prepareForFlight("Paris");
-    flightControlSystem2.startAutoPilot();
+    WrapperFlightControlSystem flightControlSystem(new FlightControlSystem());
+    flightControlSystem.pointerToFlightCtrlSys->prepareForFlight("Los Angeles");
+    flightControlSystem.pointerToFlightCtrlSys->startAutoPilot();
+    flightControlSystem.pointerToFlightCtrlSys->prepareForFlight("Paris");
+    flightControlSystem.pointerToFlightCtrlSys->startAutoPilot();
+    
+    WrapperSmartHomeSystem smartHomeSystem(new SmartHomeSystem());
+    smartHomeSystem.pointerToSmartHomeSys->checkOutBookForWeekend();
+    smartHomeSystem.pointerToSmartHomeSys->adjustTemperatureForReading();
+    smartHomeSystem.pointerToSmartHomeSys->checkOutBookForWeekend();
 
-    smartHomeSystem1.adjustTemperatureForReading();
-    smartHomeSystem1.checkOutBookForWeekend();
-    smartHomeSystem2.adjustTemperatureForReading();
-    smartHomeSystem2.checkOutBookForWeekend();
-
-    std::cout << "Thermostat thermostat1.sendEnergyUsageReport: " <<  thermostat1.sendEnergyUsageReport() << " and thermostat1.currentRoomTemperature:" << thermostat1.currentRoomTemperature << std::endl;
-    std::cout << "Library account books checked out: " << libraryAccount1.booksCheckedOut << std::endl;
-    std::cout << "Cockpit current altitude: " << cockpit1.navigationSystem.altitude << " feet" << std::endl;
-    std::cout << "Cockpit number of control panels: " << flightControlSystem1.cockpit.numberOfControlPanels << std::endl;
-    std::cout << "Smart home system desired temperature: " << smartHomeSystem1.thermostat.desiredTemperature << std::endl;
+    std::cout << "Thermostat thermostat1.sendEnergyUsageReport: " <<  thermostat.pointerToSmartTh->sendEnergyUsageReport() << " and thermostat1.currentRoomTemperature:" << thermostat.pointerToSmartTh->currentRoomTemperature << std::endl;
+    std::cout << "Library account books checked out: " << libraryAccount.pointerToLibAcc->booksCheckedOut << std::endl;
+    std::cout << "Cockpit current altitude: " << cockpit.pointerToCockpit->navigationSystem.altitude << " feet" << std::endl;
+    std::cout << "Cockpit number of control panels: " << flightControlSystem.pointerToFlightCtrlSys->cockpit.numberOfControlPanels << std::endl;
+    std::cout << "Smart home system desired temperature: " << smartHomeSystem.pointerToSmartHomeSys->thermostat.desiredTemperature << std::endl;
 
     
     std::cout << "good to go!" << std::endl;
