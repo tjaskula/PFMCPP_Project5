@@ -1,7 +1,11 @@
 #pragma once
 
-#include "FlightControlSystem.h"
-#include "SmartHomeSystem.h"
+#include "Cockpit.h"
+
+struct SmartThermostat;
+struct LibraryAccount;
+struct FlightControlSystem;
+struct SmartHomeSystem;
 
 struct WrapperCockpit
 {

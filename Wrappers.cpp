@@ -1,4 +1,6 @@
 #include "Wrappers.h"
+#include "SmartHomeSystem.h"
+#include "FlightControlSystem.h"
 
 WrapperCockpit::WrapperCockpit(Cockpit* cockpitptr) : pointerToCockpit(cockpitptr) {}
 WrapperCockpit::~WrapperCockpit()
